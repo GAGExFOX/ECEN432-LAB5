@@ -76,3 +76,4 @@ if __name__ == "__main__":
 	plt.ylabel('Quantization Error (V)')
 	plt.grid(True, linestyle='--', alpha=0.7)
 	plt.show()
+	print(f"Max Error = {max(quantization_error)} and Min Error = {min(quantization_error)}")

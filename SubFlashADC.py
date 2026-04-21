@@ -37,9 +37,7 @@ class SubFlashADC2_5Bit:
         
         return thermometer_code, digital_out
 
-# ==========================================
-# Example Usage and Testing
-# ==========================================
+#  - - - MAIN CODE - - -
 if __name__ == "__main__":
     # Initialize the ADC with a 1V full-scale range
     adc = SubFlashADC2_5Bit(v_fs)
@@ -48,10 +46,18 @@ if __name__ == "__main__":
     test_voltages = np.arange(0, 1, 0.01)
     dig_code_vals = []
 
+	# Quantize values through ADC and convert to 3-Bit Binary Output
     for v in test_voltages:
         therm_code, digital_code = adc.quantize(v)
-        dig_code_vals.append(digital_code)
-        
-    plt.plot(test_voltages, dig_code_vals)
+        dig_code_vals.append(bin(digital_code).replace("0b", ""))
+
+	# Plotting Characteristic Graph of 2.5-Bit Sub Flash ADC with 1-Bit Redundancy
+    plt.figure(figsize=(8, 5))
+    plt.step(test_voltages, dig_code_vals, where='post', linewidth=2, color='blue')
+    plt.title('2.5-Bit Sub-Flash ADC Transfer Characteristic')
+    plt.xlabel('Analog Input Voltage (V)')
+    plt.ylabel('Digital Output Code')
+    plt.yticks(range(7)) 
+    plt.grid(True, linestyle='--', alpha=0.7)
+    
     plt.show()
-        

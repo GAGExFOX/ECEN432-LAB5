@@ -124,4 +124,41 @@ if __name__ == "__main__":
 	plt.yticks(range(7)) 
 	plt.grid(True, linestyle='--', alpha=0.7)
 	plt.show()
+	
+	
+	DNLs = [0, 0, 0, 0, 0, 0]
+	# Calculating DNL and INL of Voltage Offsets
+	for num in range(0, 100):
+		np.random.seed((num+1)*3)
+		voltage_offsets = np.random.uniform(low=-0.02, high=0.02, size=6)
 		
+		# Create non-ideal ADC object
+		adc = SubFlashADC2_5Bit(v_fs, v_os_list=voltage_offsets)
+		
+		test_voltages = np.arange(0, 1, 0.001)
+		dig_code_vals = []
+		quantization_error = []
+
+
+		bucket_start = 0
+		bucket_end = 0
+		prev_digital_code = 0
+		k = 0
+		for v in test_voltages:
+			digital_code = adc.quantize(v)
+			dig_code_vals.append(bin(digital_code).replace("0b", ""))
+			
+			if digital_code > prev_digital_code:
+				bucket_end = v
+				DNLs[k] += ((bucket_end-bucket_start) - 0.125) / 0.125
+				bucket_start = v
+				k += 1
+				
+			prev_digital_code = digital_code
+			
+for i, num in enumerate(DNLs):
+	DNLs[i] = DNLs[i] / 100
+	print(DNLs[i])
+
+INL = sum(DNLs)
+print(f"INL = {INL}")
